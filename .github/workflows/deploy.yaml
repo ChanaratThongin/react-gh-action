@@ -14,6 +14,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Print bun version
+        run: echo "Bun version:${{ vars.BUN_VERSION }}"
+
+      - name: Print API Key
+        run: echo "API Key:${{ secrets.API_KEY }}"
+
       - name: Clone repo
         uses: actions/checkout@v5
 
