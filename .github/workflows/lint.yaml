@@ -1,4 +1,4 @@
-name: Lint Code 
+name: Lint Code
 on:
   push:
     branches:
@@ -11,8 +11,12 @@ on:
       - opened
 jobs:
   lint:
+    environment: dev
     runs-on: ubuntu-latest
     steps:
+      - name: Print bun version
+        run: echo "Bun version:${{ vars.BUN_VERSION }}"
+
       - name: Clone repo
         uses: actions/checkout@v5
 

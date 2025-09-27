@@ -12,6 +12,7 @@ on:
       - opened
 jobs:
   build:
+    environment: prod
     runs-on: ubuntu-latest
     steps:
       - name: Print bun version
