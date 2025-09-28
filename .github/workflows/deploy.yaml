@@ -14,6 +14,10 @@ jobs:
   build:
     environment: prod
     runs-on: ubuntu-latest
+    container:
+      image: oven/bun:latest
+      env:
+        NODE_ENV: production
     steps:
       - name: Print bun version
         run: echo "Bun version:${{ vars.BUN_VERSION }}"
@@ -24,10 +28,10 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v5
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      # - name: Setup Bun
+      #   uses: oven-sh/setup-bun@v2
+      #   with:
+      #     bun-version: latest
 
       - name: Cache node modules
         uses: actions/cache@v4
