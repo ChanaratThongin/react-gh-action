@@ -21,7 +21,8 @@ jobs:
         run: bun run build
 
       - name: Lint dist
-        uses: ls dist
+        run: ls dist
+
       - name: Upload dist
         uses: actions/upload-artifact@v4
         with:
