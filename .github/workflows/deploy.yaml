@@ -30,15 +30,24 @@ jobs:
           path: dist/
 
   deploy:
-    if: ${{ github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
+    name: Deploy to surge
     needs:
       - build
+    runs-on: ubuntu-latest
     steps:
-      - name: Download dist
+      - name: Checkout code
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: dist-folder
-          path: dist
-      - name: Deploy
-        run: echo "Deploying..."
+          path: ./dist
+      - name: Deploy to surge
+        id: deploy
+        uses: ./.github/actions/deploy-surge
+        with:
+          domain: react-gh.surge.sh
+          token: ${{ secrets.SURGE_TOKEN }}
+          email: ${{ vars.SURGE_EMAIL }}
+          dist-folder: ./dist

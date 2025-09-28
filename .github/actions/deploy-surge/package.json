@@ -1,0 +1,21 @@
+{
+  "name": "deploy-surge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/tsdown"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@actions/core": "^1.11.1",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^6.0.1",
+    "tsdown": "^0.15.5",
+    "typescript": "^5.9.2"
+  }
+}

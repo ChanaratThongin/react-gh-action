@@ -1,0 +1,19 @@
+name: Deploy to Surge
+description: Install dependencies and caching
+inputs:
+  token:
+    description: "Surge token"
+    required: true
+  email:
+    description: "Surge email"
+    required: true
+  dist-folder:
+    description: "Dist folder"
+    required: false
+    default: "dist"
+  domain:
+    description: "Surge domain"
+    required: true
+runs:
+  using: node24
+  main: dist-action/index.js
