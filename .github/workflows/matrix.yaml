@@ -15,6 +15,14 @@ jobs:
         bun-version: [1.2.0, 1.2.16, 1.2.18]
         # ทดสอบหลาย browser (สำหรับ e2e testing)
         browser: [chrome, firefox, safari]
+        exclude:
+          - bun-version: "1.2.18"
+            browser: "safari"
+        include:
+          - bun-version: "1.2.18"
+            browser: "edge"
+          - bun-version: "1.1.0"
+            browser: "safari"
     steps:
       - name: Print Bun version and test Browser
         run: |
