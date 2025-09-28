@@ -16990,8 +16990,8 @@ async function main() {
 		required: true,
 		trimWhitespace: true
 	});
-	const command = `bun x surge --token ${token} --login ${email} ${distFolder} ${domain}`;
-	return import_exec.exec(command);
+	const command = `npx surge ${distFolder} --token ${token} --login ${email} --domain ${domain}`;
+	return await import_exec.exec(command);
 }
 main();
 
