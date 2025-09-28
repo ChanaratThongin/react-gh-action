@@ -57,7 +57,10 @@ jobs:
       - build
     steps:
       - name: Download dist artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/download-artifact@v4
         with:
           name: dist-folder
           path: dist/
+      - name: Deploying...
+        run: echo "Deploying..."
