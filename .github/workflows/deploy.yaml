@@ -1,96 +1,28 @@
-name: Deploy React CRS
+name: Deploy Docker
 on:
   push:
-    branches:
-      - main
-      # - features/**
-      # - jira-id/**
-      # - "!features/authen"
   workflow_dispatch:
-  pull_request:
-    types:
-      - opened
 jobs:
-  build:
-    environment: prod
+  build-docker:
     runs-on: ubuntu-latest
-    container:
-      image: oven/bun:latest
-      env:
-        NODE_ENV: production
     steps:
-      - name: Print bun version
-        run: echo "Bun version:${{ vars.BUN_VERSION }}"
-
-      - name: Print API Key
-        run: echo "API Key:${{ secrets.API_KEY }}"
-
       - name: Clone repo
         uses: actions/checkout@v5
 
-      # - name: Setup Bun
-      #   uses: oven-sh/setup-bun@v2
-      #   with:
-      #     bun-version: latest
-
-      - name: Cache node modules
-        uses: actions/cache@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          path: |
-            ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: bun install
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: Build
-        run: bun run build
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: List dist/
-        run: ls dist/
-
-      - name: Upload dist artifact
-        uses: actions/upload-artifact@v4
+      - name: Build and push
+        uses: docker/build-push-action@v6
         with:
-          name: dist-folder
-          path: dist/
-
-  deploy:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs:
-      - build
-    steps:
-      - name: Download dist artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dist-folder
-          path: dist/
-      - name: Deploying...
-        run: echo "Deploying..."
-  notify-success:
-    runs-on: ubuntu-latest
-    needs:
-      - build
-      - deploy
-    if: success()
-    steps:
-      - name: Discord notification
-        env:
-          DISCORD_WEBHOOK: https://discord.com/api/webhooks/1421698084794273833/kZLkpNkvG4sLClVLiSahwOdnInPoCabw_NcVzCHtP1kKS5K_4mBPXRvzyY5eC6mBDs9W
-        uses: Ilshidur/action-discord@master
-        with:
-          args: "Build and deploy successfully {{ needs.build.result }}, {{ needs.deploy.result }}"
-  notify-failure:
-    runs-on: ubuntu-latest
-    needs:
-      - build
-      - deploy
-    if: failure()
-    steps:
-      - name: Discord notification
-        env:
-          DISCORD_WEBHOOK: https://discord.com/api/webhooks/1421698084794273833/kZLkpNkvG4sLClVLiSahwOdnInPoCabw_NcVzCHtP1kKS5K_4mBPXRvzyY5eC6mBDs9W
-        uses: Ilshidur/action-discord@master
-        with:
-          args: "Build or deploy failed {{ needs.build.result }}, {{ needs.deploy.result }}"
+          push: true
+          tags: earthchnt/react-gh:latest
