@@ -1,0 +1,32 @@
+name: Sequential Job Execution
+on: [push]
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup environment
+        run: echo "Setting up environment"
+      - name: Install dependencies
+        run: echo "Installing dependencies"
+
+  test:
+    needs: setup # Waits for setup to complete successfully
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests
+        run: echo "Running tests"
+
+  build:
+    needs: test # Waits for test to complete successfully
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build application
+        run: echo "Building application"
+
+  deploy:
+    needs: [setup, test, build] # Waits for ALL specified jobs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to production
+        run: echo "Deploying to production"
