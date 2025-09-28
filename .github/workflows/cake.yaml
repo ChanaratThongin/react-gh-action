@@ -1,0 +1,25 @@
+name: Test Cakes
+on: [push]
+
+jobs:
+  test-cakes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ทดสอบเค้กชิ้นที่ 1
+        id: cake1
+        run: echo "เค้กชิ้นที่ 1 อร่อย" && exit 0
+
+      - name: ทดสอบเค้กชิ้นที่ 2
+        id: cake2
+        run: echo "เค้กชิ้นที่ 2 ไหม้" && exit 1
+        continue-on-error: true
+
+      - name: ทดสอบเค้กชิ้นที่ 3
+        id: cake3
+        run: echo "เค้กชิ้นที่ 3 อร่อย" && exit 0
+
+      - name: สรุปผลการทดสอบเค้ก
+        run: |
+          echo "เค้กชิ้นที่ 1 - outcome: ${{ steps.cake1.outcome }}, conclusion: ${{ steps.cake1.conclusion }}"
+          echo "เค้กชิ้นที่ 2 - outcome: ${{ steps.cake2.outcome }}, conclusion: ${{ steps.cake2.conclusion }}"
+          echo "เค้กชิ้นที่ 3 - outcome: ${{ steps.cake3.outcome }}, conclusion: ${{ steps.cake3.conclusion }}"
