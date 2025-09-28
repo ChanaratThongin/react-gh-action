@@ -1,32 +1,66 @@
-name: Sequential Job Execution
+name: Advanced Conditional Execution
 on: [push]
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup environment
-        run: echo "Setting up environment"
-      - name: Install dependencies
-        run: echo "Installing dependencies"
-
   test:
-    needs: setup # Waits for setup to complete successfully
     runs-on: ubuntu-latest
+    outputs:
+      test-result: ${{ steps.test-step.outcome }}
     steps:
       - name: Run tests
-        run: echo "Running tests"
+        id: test-step
+        run: |
+          # Simulate random test failure
+          if [ $((RANDOM % 2)) -eq 0 ]; then
+            echo "Tests passed"
+            exit 0
+          else
+            echo "Tests failed"
+            exit 1
+          fi
+        continue-on-error: true
 
-  build:
-    needs: test # Waits for test to complete successfully
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build application
-        run: echo "Building application"
-
-  deploy:
-    needs: [setup, test, build] # Waits for ALL specified jobs
+  # Runs only if tests succeed
+  deploy-production:
+    needs: test
+    if: success() # Default behavior, explicit here
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to production
         run: echo "Deploying to production"
+
+  # Runs only if tests fail
+  notify-failure:
+    needs: test
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify team of failure
+        run: echo "Notifying team about test failure"
+
+  # Runs regardless of test outcome
+  generate-report:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate test report
+        run: echo "Generating test report"
+
+  # Runs only if tests were cancelled
+  handle-cancellation:
+    needs: test
+    if: cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Handle cancellation
+        run: echo "Handling workflow cancellation"
+
+  # Complex conditional logic
+  conditional-deploy:
+    needs: test
+    if: success() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to staging
+        run: echo "Deploying to staging from main branch"
